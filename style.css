@@ -252,15 +252,15 @@ body {
 .alerts-empty { text-align:center; padding:24px; color:#888; font-size:11px; text-transform:uppercase; letter-spacing:1px; }
 
 /* Profile Page */
-.profile-wrap { display:flex; gap:24px; flex-wrap:wrap; }
-.profile-avatar-section { text-align:center; }
+.profile-wrap { display:flex; gap:24px; flex-wrap:wrap; align-items:center; }
+.profile-avatar-section { display:flex; flex-direction:column; align-items:center; }
 .profile-avatar {
   width:140px; height:140px; border-radius:50%; border:3px solid #222;
   background:#ece6d8; overflow:hidden; margin-bottom:12px;
 }
 .profile-avatar img { width:100%; height:100%; object-fit:cover; }
-.profile-avatar-section .avatar-seed { font-size:10px; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
-.profile-avatar-section .avatar-style-select { margin-bottom:10px; }
+.profile-avatar-section .avatar-seed { font-size:10px; color:#888; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center; }
+.profile-avatar-section .avatar-style-select { margin-bottom:10px; width:100%; max-width:180px; }
 .profile-avatar-section .avatar-style-select select {
   padding:5px 8px; border:2px solid #222; font-family:'Courier New',Courier,monospace; font-size:10px; background:#fff; width:100%;
 }
