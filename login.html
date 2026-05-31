@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stock Terminal</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- AUTH -->
+    <div class="auth-container" id="authBox">
+      <div id="authMsg" class="message"></div>
+      <div id="loginForm">
+        <h2>Welcome Back</h2>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input
+              type="email"
+              id="loginEmail"
+              required
+              placeholder="you@example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input
+              type="password"
+              id="loginPassword"
+              required
+              placeholder="••••••••"
+            />
+          </div>
+          <label class="remember-me">
+            <input type="checkbox" id="rememberMe" />
+            <span>Remember Me</span>
+          </label>
+          <button type="submit" class="auth-btn">Sign In</button>
+        </form>
+        <p class="toggle-text">
+          Don't have an account? <a onclick="toggleForm()">Register</a>
+        </p>
+      </div>
+      <div id="registerForm" class="hidden">
+        <h2>Create Account</h2>
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="registerName">Name</label>
+            <input
+              type="text"
+              id="registerName"
+              required
+              placeholder="John Doe"
+            />
+          </div>
+          <div class="form-group">
+            <label for="registerEmail">Email</label>
+            <input
+              type="email"
+              id="registerEmail"
+              required
+              placeholder="you@example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label for="registerPassword">Password</label>
+            <input
+              type="password"
+              id="registerPassword"
+              required
+              placeholder="••••••••"
+              minlength="6"
+            />
+          </div>
+          <button type="submit" class="auth-btn">Sign Up</button>
+        </form>
+        <p class="toggle-text">
+          Already have an account? <a onclick="toggleForm()">Sign In</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dboard" id="dboard">
+      <div class="top-bar">
+        <button class="hamburger" onclick="toggleSidebar()">☰</button>
+        <div class="logo">◈ STOCK TERMINAL</div>
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input
+            type="text"
+            id="stockSearch"
+            placeholder="Search symbol..."
+            oninput="searchGlobal(this.value)"
+            onkeydown="
+              if (event.key === 'Enter') searchGlobal(this.value, true);
+            "
+          />
+        </div>
+        <div class="top-right">
+          <div class="avatar-sm" id="topAvatar"><img src="" alt="" /></div>
+          <span class="uname" id="dashUserName">—</span>
+          <button class="logout-link" onclick="handleLogout()">EXIT</button>
+        </div>
+      </div>
+      <div class="news-ticker"><span id="newsTickerText">Loading...</span></div>
+      <div class="dbody">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+          <div
+            class="nav-item active"
+            data-page="dashboard"
+            onclick="switchPage('dashboard')"
+          >
+            <span class="nav-icon">◈</span>Dashboard
+          </div>
+          <div
+            class="nav-item"
+            data-page="markets"
+            onclick="switchPage('markets')"
+          >
+            <span class="nav-icon">▣</span>Markets
+          </div>
+          <div
+            class="nav-item"
+            data-page="portfolio"
+            onclick="switchPage('portfolio')"
+          >
+            <span class="nav-icon">◲</span>Portfolio
+          </div>
+          <div
+            class="nav-item"
+            data-page="watchlist"
+            onclick="switchPage('watchlist')"
+          >
+            <span class="nav-icon">◉</span>Watchlist
+          </div>
+          <div class="nav-divider"></div>
+          <div class="nav-label">Orders</div>
+          <div class="nav-item" data-page="buy" onclick="switchPage('buy')">
+            <span class="nav-icon">↕</span>Buy / Sell
+          </div>
+          <div
+            class="nav-item"
+            data-page="history"
+            onclick="switchPage('history')"
+          >
+            <span class="nav-icon">◷</span>History
+          </div>
+          <div class="nav-divider"></div>
+          <div class="nav-label">Account</div>
+          <div
+            class="nav-item"
+            data-page="profile"
+            onclick="switchPage('profile')"
+          >
+            <span class="nav-icon">◉</span>Profile
+          </div>
+          <div
+            class="nav-item"
+            data-page="alerts"
+            onclick="switchPage('alerts')"
+          >
+            <span class="nav-icon">⚡</span>Alerts
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+          <!-- DASHBOARD -->
+          <div class="page active" id="page-dashboard">
+            <div class="indices" id="indices">
+              <div class="idx">
+                <div class="idx-name">S&P 500</div>
+                <div class="idx-val" id="idx-sp">—</div>
+                <div class="idx-chg" id="idx-sp-chg">—</div>
+              </div>
+              <div class="idx">
+                <div class="idx-name">DOW</div>
+                <div class="idx-val" id="idx-dow">—</div>
+                <div class="idx-chg" id="idx-dow-chg">—</div>
+              </div>
+              <div class="idx">
+                <div class="idx-name">NASDAQ</div>
+                <div class="idx-val" id="idx-nas">—</div>
+                <div class="idx-chg" id="idx-nas-chg">—</div>
+              </div>
+              <div class="idx">
+                <div class="idx-name">RUSSELL</div>
+                <div class="idx-val" id="idx-rus">—</div>
+                <div class="idx-chg" id="idx-rus-chg">—</div>
+              </div>
+              <div class="idx">
+                <div class="idx-name">VIX</div>
+                <div class="idx-val" id="idx-vix">—</div>
+                <div class="idx-chg" id="idx-vix-chg">—</div>
+              </div>
+            </div>
+            <div class="main-chart-wrap">
+              <div class="mc-header">
+                <div>
+                  <span class="mc-sym" id="mcSymbol">AAPL</span>
+                  <span class="mc-price up" id="mcPrice">—</span>
+                </div>
+                <div class="mc-actions">
+                  <button onclick="switchMainStock(-1)">◀ PREV</button>
+                  <button onclick="switchMainStock(1)">NEXT ▶</button>
+                </div>
+              </div>
+              <canvas id="mainChart"></canvas>
+            </div>
+            <div class="section-title">Market Overview</div>
+            <div style="overflow-x: auto">
+              <table class="stock-table" id="stockTable">
+                <thead>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>%</th>
+                    <th>Vol</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Chart</th>
+                  </tr>
+                </thead>
+                <tbody id="stockTableBody"></tbody>
+              </table>
+            </div>
+            <div class="bottom-row">
+              <div class="order-panel">
+                <div class="order-title">◈ Quick Order</div>
+                <div class="order-row">
+                  <label>Symbol</label>
+                  <select id="dashOrderSymbol">
+                    <option value="AAPL">AAPL</option>
+                    <option value="TSLA">TSLA</option>
+                    <option value="GOOG">GOOG</option>
+                    <option value="AMZN">AMZN</option>
+                    <option value="MSFT">MSFT</option>
+                    <option value="NVDA">NVDA</option>
+                    <option value="META">META</option>
+                    <option value="NFLX">NFLX</option>
+                    <option value="JPM">JPM</option>
+                    <option value="BAC">BAC</option>
+                    <option value="DIS">DIS</option>
+                    <option value="KO">KO</option>
+                  </select>
+                </div>
+                <div class="order-row">
+                  <label>Qty</label>
+                  <input type="number" id="dashOrderQty" value="10" min="1" />
+                </div>
+                <div class="order-btns">
+                  <button class="btn-buy" onclick="quickOrder('BUY')">
+                    BUY
+                  </button>
+                  <button class="btn-sell" onclick="quickOrder('SELL')">
+                    SELL
+                  </button>
+                </div>
+                <div class="order-msg" id="dashOrderMsg"></div>
+              </div>
+              <div class="portfolio-panel">
+                <div class="port-title">◈ Portfolio</div>
+                <div id="portfolioBody"></div>
+                <div class="port-total" id="portfolioTotal">$0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MARKETS -->
+          <div class="page" id="page-markets">
+            <div class="page-title">◈ All Markets</div>
+            <div class="market-grid" id="marketGrid"></div>
+          </div>
+
+          <!-- PORTFOLIO -->
+          <div class="page" id="page-portfolio">
+            <div class="page-title">◈ Portfolio Summary</div>
+            <div class="port-summary" id="portSummary">
+              <div class="ps-card">
+                <div class="ps-label">Total Value</div>
+                <div class="ps-val" id="ps-total">$0</div>
+              </div>
+              <div class="ps-card">
+                <div class="ps-label">Holdings</div>
+                <div class="ps-val" id="ps-count">0</div>
+              </div>
+              <div class="ps-card">
+                <div class="ps-label">Best</div>
+                <div class="ps-val" id="ps-best">—</div>
+              </div>
+              <div class="ps-card">
+                <div class="ps-label">Worst</div>
+                <div class="ps-val" id="ps-worst">—</div>
+              </div>
+            </div>
+            <div class="section-title">Holdings</div>
+            <div class="port-holdings">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Symbol</th>
+                    <th>Shares</th>
+                    <th>Avg Cost</th>
+                    <th>Current</th>
+                    <th>Value</th>
+                    <th>P&L</th>
+                    <th>Return</th>
+                  </tr>
+                </thead>
+                <tbody id="portHoldingsBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- WATCHLIST -->
+          <div class="page" id="page-watchlist">
+            <div class="page-title">◈ Watchlist</div>
+            <div class="watchlist-controls">
+              <select id="wlAddSelect">
+                <option value="AAPL">AAPL</option>
+                <option value="TSLA">TSLA</option>
+                <option value="GOOG">GOOG</option>
+                <option value="AMZN">AMZN</option>
+                <option value="MSFT">MSFT</option>
+                <option value="NVDA">NVDA</option>
+                <option value="META">META</option>
+                <option value="NFLX">NFLX</option>
+                <option value="JPM">JPM</option>
+                <option value="BAC">BAC</option>
+                <option value="DIS">DIS</option>
+                <option value="KO">KO</option>
+              </select>
+              <button onclick="addToWatchlist()">+ Add</button>
+            </div>
+            <div class="watchlist-grid" id="watchlistGrid"></div>
+          </div>
+
+          <!-- BUY/SELL -->
+          <div class="page" id="page-buy">
+            <div class="page-title">◈ Place Order</div>
+            <div class="order-form-wrap">
+              <div class="of-row">
+                <label>Symbol</label>
+                <select id="orderSymbol">
+                  <option value="AAPL">AAPL</option>
+                  <option value="TSLA">TSLA</option>
+                  <option value="GOOG">GOOG</option>
+                  <option value="AMZN">AMZN</option>
+                  <option value="MSFT">MSFT</option>
+                  <option value="NVDA">NVDA</option>
+                  <option value="META">META</option>
+                  <option value="NFLX">NFLX</option>
+                  <option value="JPM">JPM</option>
+                  <option value="BAC">BAC</option>
+                  <option value="DIS">DIS</option>
+                  <option value="KO">KO</option>
+                </select>
+              </div>
+              <div class="of-row">
+                <label>Type</label>
+                <select id="orderType">
+                  <option value="BUY">BUY</option>
+                  <option value="SELL">SELL</option>
+                </select>
+              </div>
+              <div class="of-row">
+                <label>Qty</label>
+                <input type="number" id="orderQty" value="10" min="1" />
+              </div>
+              <div class="of-row">
+                <label>Price</label>
+                <input
+                  type="text"
+                  id="orderPrice"
+                  readonly
+                  style="background: #ece6d8"
+                />
+              </div>
+              <div
+                class="order-msg"
+                id="orderPageMsg"
+                style="
+                  margin-top: 6px;
+                  font-size: 10px;
+                  text-transform: uppercase;
+                  letter-spacing: 1px;
+                "
+              ></div>
+              <div class="of-btns">
+                <button class="of-buy" onclick="placeOrderFull('BUY')">
+                  BUY
+                </button>
+                <button class="of-sell" onclick="placeOrderFull('SELL')">
+                  SELL
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- HISTORY -->
+          <div class="page" id="page-history">
+            <div class="page-title">◈ Order History</div>
+            <div style="overflow-x: auto">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Symbol</th>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PROFILE -->
+          <div class="page" id="page-profile">
+            <div class="page-title">◈ My Profile</div>
+            <div class="profile-wrap">
+              <div class="profile-avatar-section">
+                <div class="profile-avatar" id="profileAvatar">
+                  <img src="" alt="" />
+                </div>
+                <div class="avatar-seed" id="avatarSeed">seed: —</div>
+                <div class="avatar-style-select">
+                  <select id="avatarStyle">
+                    <option value="avataaars">Cartoon</option>
+                    <option value="bottts">Robot</option>
+                    <option value="initials">Initials</option>
+                    <option value="identicon">Geometric</option>
+                    <option value="lorelei">Lorelei</option>
+                    <option value="adventurer">Adventurer</option>
+                    <option value="big-ears">Big Ears</option>
+                    <option value="micah">Micah</option>
+                  </select>
+                </div>
+                <button class="regenerate-btn" onclick="regenerateAvatar()">
+                  ⟳ New Avatar
+                </button>
+              </div>
+              <div class="profile-form">
+                <div class="pf-row">
+                  <label>Name</label>
+                  <input type="text" id="profileName" />
+                </div>
+                <div class="pf-row">
+                  <label>Email</label>
+                  <input type="email" id="profileEmail" disabled />
+                </div>
+                <div class="pf-row">
+                  <label>New Password (leave empty to keep)</label>
+                  <input
+                    type="password"
+                    id="profilePassword"
+                    placeholder="••••••••"
+                  />
+                </div>
+                <div
+                  id="profileMsg"
+                  style="
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    margin-bottom: 10px;
+                    min-height: 16px;
+                  "
+                ></div>
+                <button class="profile-save-btn" onclick="saveProfile()">
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ALERTS -->
+          <div class="page" id="page-alerts">
+            <div class="page-title">Price Alerts</div>
+            <div class="alerts-form">
+              <div class="af-row">
+                <label>Symbol</label>
+                <select id="alertSymbol">
+                  <option value="AAPL">AAPL</option>
+                  <option value="TSLA">TSLA</option>
+                  <option value="GOOG">GOOG</option>
+                  <option value="AMZN">AMZN</option>
+                  <option value="MSFT">MSFT</option>
+                  <option value="NVDA">NVDA</option>
+                  <option value="META">META</option>
+                  <option value="NFLX">NFLX</option>
+                  <option value="JPM">JPM</option>
+                  <option value="BAC">BAC</option>
+                  <option value="DIS">DIS</option>
+                  <option value="KO">KO</option>
+                </select>
+              </div>
+              <div class="af-row">
+                <label>Condition</label>
+                <select id="alertCondition">
+                  <option value="above">Above</option>
+                  <option value="below">Below</option>
+                </select>
+              </div>
+              <div class="af-row">
+                <label>Price $</label>
+                <input type="number" id="alertPrice" value="200" step="0.01" />
+              </div>
+              <button class="alerts-btn" onclick="addAlert()">Set Alert</button>
+            </div>
+            <div class="alerts-list" id="alertsList">
+              <div class="alerts-empty">No alerts set</div>
+            </div>
+          </div>
+        </div>
+        <!-- /main -->
+      </div>
+      <!-- /dbody -->
+    </div>
+    <!-- /dboard -->
+
+    <script src="script.js"></script>
+  </body>
+</html>
